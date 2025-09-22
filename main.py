@@ -1,16 +1,11 @@
 import streamlit as st
 from PIL import Image
 from ultralytics import YOLO
-import os
+import dill
 
-# Ensure models are downloaded before running the app
-import download_models
-
-# Function to load the selected model
-def load_model(model_name):
-    model_path = os.path.join("models", model_name)
-    model = YOLO(model_path)
-    return model
+# Load YOLO models
+vehicle_model = YOLO('vehicle.pt')
+barcode_model = YOLO('barcode.pt')
 
 # Function to perform inference based on model selection
 def perform_inference(model, uploaded_image):
@@ -20,27 +15,23 @@ def perform_inference(model, uploaded_image):
 
 # Streamlit app
 def main():
-    st.title("Barcode, QR Code, and Vehicle Detection Application")
+    st.title("Barcode, QR Code and Vehicle Detection Application")
 
-    # Step 1: Task selection
-    task = st.sidebar.radio("Select Detection Task", ("Barcode-QR Detection", "Vehicle Detection"))
+    # Sidebar - Model selection
+    selected_model = st.sidebar.radio("Select Model", ("Barcode-QR", "Vehicle"))
 
-    # Step 2: Model selection based on the selected task
-    model_choice = st.sidebar.radio("Select Model Version", ("YOLOv8", "YOLOv9", "YOLOv10"))
-
-    # Correctly form the model name
-    model_name = f"{model_choice.lower()}_{'barcode' if task == 'Barcode-QR Detection' else 'vehicle'}.pt"
-
-    # Load the selected model
-    model = load_model(model_name)
-
-    # Step 3: Image upload
+    # Upload image
     uploaded_image = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
 
     if uploaded_image is not None:
-        st.image(uploaded_image, caption="Uploaded Image")#, use_container_width=True)
+        st.image(uploaded_image, caption="Uploaded Image", use_column_width=True)
 
         # Run inference based on selected model
+        if selected_model == "Barcode-QR":
+            model = barcode_model
+        else:
+            model = vehicle_model
+
         if st.button("Run Detection"):
             with st.spinner('Running inference...'):
                 try:
@@ -49,13 +40,13 @@ def main():
 
                     # Visualize and save results
                     for i, r in enumerate(results):
-                        st.subheader("Result")
+                        st.subheader(f"Result")
                         
                         # Plot results image
                         im_bgr = r.plot()  # BGR-order numpy array
                         im_rgb = Image.fromarray(im_bgr[..., ::-1])  # RGB-order PIL image
-                        st.image(im_rgb, caption="Result")#, use_container_width=True)
-
+                        st.image(im_rgb, caption=f"Result", use_column_width=True)
+                        
                 except Exception as e:
                     st.error(f"Error: {e}")
 
