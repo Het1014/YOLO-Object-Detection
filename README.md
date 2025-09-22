@@ -49,9 +49,10 @@ This project implements a **web application** for detecting **barcodes, QR codes
 
 3. **Download pre-trained YOLO model weights:**
 
-   * `vehicle.pt` → for vehicle detection
-   * `barcode.pt` → for barcode/QR detection
-     Place both files in the **root directory** of the project.
+   ```bash
+   python download_models.py
+   ```
+     Place files in the **root directory** of the project.
 
 4. **Run the Streamlit web app:**
 
