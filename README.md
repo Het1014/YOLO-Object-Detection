@@ -80,20 +80,6 @@ Check the live demo here: [Live Demo](https://yolo-barcode-vehicle-detection.str
 
 ---
 
-## Project Structure
-
-```
-Barcode-QR-and-Vehicle-Detection-using-YOLO/
-├── main.py               # Streamlit app
-├── vehicle.pt            # YOLO model weights for vehicle detection
-├── barcode.pt            # YOLO model weights for barcode/QR detection
-├── requirements.txt      # Python dependencies
-├── README.md             # Project README
-└── utils/                # Utility functions (optional)
-```
-
----
-
 ## Screenshots
 
 ### Vehicle Detection
